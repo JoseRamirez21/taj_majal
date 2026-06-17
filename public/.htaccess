@@ -1,0 +1,49 @@
+Options -Indexes
+Options +FollowSymLinks
+RewriteEngine On
+RewriteBase /taj_majal/public/
+
+# ── Seguridad: bloquear acceso a archivos sensibles ──────────
+<FilesMatch "\.(sql|log|env|ini|sh|bak|git)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ── Bloquear acceso directo a carpetas del sistema ───────────
+RedirectMatch 403 ^/tajmahal/app/
+RedirectMatch 403 ^/tajmahal/config/
+RedirectMatch 403 ^/tajmahal/database/
+
+# ── Cabeceras de seguridad ────────────────────────────────────
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ── Comprensión GZIP ─────────────────────────────────────────
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json
+</IfModule>
+
+# ── Cache para assets estáticos ──────────────────────────────
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css             "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType image/png            "access plus 1 month"
+    ExpiresByType image/jpg            "access plus 1 month"
+    ExpiresByType image/jpeg           "access plus 1 month"
+    ExpiresByType image/gif            "access plus 1 month"
+    ExpiresByType image/webp           "access plus 1 month"
+    ExpiresByType image/svg+xml        "access plus 1 month"
+    ExpiresByType application/x-font-woff2 "access plus 1 year"
+</IfModule>
+
+# ── Permitir archivos y carpetas reales (css, js, img…) ──────
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# ── Todo lo demás → index.php ────────────────────────────────
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
