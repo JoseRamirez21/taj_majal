@@ -93,15 +93,27 @@ class DashboardController {
         require_once APP_PATH . '/views/admin/dashboard.php';
     }
 
-    public function notificaciones(): void {
-        header('Content-Type: application/json');
-        $notifs = Database::fetchAll(
-            "SELECT * FROM notificaciones
-             WHERE (para_rol = ? OR para_rol IS NULL) AND leida = 0
-             ORDER BY creado_en DESC LIMIT 10",
-            [Auth::rol()]
-        );
-        echo json_encode($notifs);
-        exit;
-    }
+  public function notificaciones(): void {
+    header('Content-Type: application/json; charset=utf-8');
+    $rol = Auth::rol();
+    echo json_encode([
+        'notificaciones' => Notificacion::paraRol($rol, 15),
+        'no_leidas'      => Notificacion::noLeidasCount($rol),
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+public function marcarLeida(): void {
+    header('Content-Type: application/json; charset=utf-8');
+    $id = (int)($_POST['id'] ?? 0);
+    if ($id) Notificacion::marcarLeida($id);
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
+public function marcarTodasLeidas(): void {
+    header('Content-Type: application/json; charset=utf-8');
+    Notificacion::marcarTodasLeidas(Auth::rol());
+    echo json_encode(['ok' => true]);
+    exit;
+}
 }

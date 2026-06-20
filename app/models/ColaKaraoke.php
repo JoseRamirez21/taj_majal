@@ -39,13 +39,20 @@ class ColaKaraoke {
         );
     }
 
-    public static function agregar(array $d): int {
+   public static function agregar(array $d): int {
         $maxPos = Database::fetch("SELECT COALESCE(MAX(posicion),0) m FROM cola_karaoke WHERE estado='en_espera'")['m'] ?? 0;
-        return Database::insert(
+        $id = Database::insert(
             "INSERT INTO cola_karaoke (sala_id, mesa_id, cancion_id, cantante_nombre, posicion, nota_publica)
              VALUES (?,?,?,?,?,?)",
             [$d['sala_id'] ?? null, $d['mesa_id'] ?? null, $d['cancion_id'], $d['cantante_nombre'] ?: 'Anónimo', $maxPos + 1, $d['nota_publica'] ?? null]
         );
+
+        $cancion = Database::fetch("SELECT titulo FROM canciones WHERE id=?", [$d['cancion_id']]);
+        if ($cancion) {
+            Notificacion::nuevaCancion($cancion['titulo'], $d['cantante_nombre'] ?: 'Anónimo');
+        }
+
+        return $id;
     }
 
     public static function marcarCantando(int $id): bool {

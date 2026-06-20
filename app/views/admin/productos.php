@@ -177,11 +177,19 @@ function guardarProducto() {
     if (document.getElementById("prodDestacado").checked) fd.append("destacado", "1");
 
     fetch("' . BASE_URL . '/productos/guardar", { method: "POST", body: fd })
-        .then(r => r.json())
-        .then(data => {
-            if (data.ok) { mostrarToast("✅ Producto guardado", "success"); setTimeout(()=>location.reload(), 600); }
-            else mostrarToast(data.error || "Error", "danger");
-        });
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            Swal.fire({
+                toast: true, position: "top-end", icon: "success",
+                title: "Producto guardado", showConfirmButton: false, timer: 1500,
+                background: "#1a1a28", color: "#f0e8d0"
+            });
+            setTimeout(()=>location.reload(), 600);
+        } else {
+            alertaTm(data.error || "Error al guardar", "error");
+        }
+    });
 }
 </script>';
 require_once APP_PATH . '/views/partials/footer.php';

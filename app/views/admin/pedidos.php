@@ -97,7 +97,14 @@ function cambiarEstado(id, estado) {
     fetch("' . BASE_URL . '/pedidos/estado", { method: "POST", body: fd })
         .then(r => r.json())
         .then(data => {
-            if (data.ok) { mostrarToast("✅ Pedido actualizado", "success"); setTimeout(()=>location.reload(), 500); }
+            if (data.ok) {
+                Swal.fire({
+                    toast: true, position: "top-end", icon: "success",
+                    title: "Pedido actualizado", showConfirmButton: false, timer: 1500,
+                    background: "#1a1a28", color: "#f0e8d0"
+                });
+                setTimeout(()=>location.reload(), 500);
+            }
         });
 }
 </script>';

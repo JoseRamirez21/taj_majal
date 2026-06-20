@@ -313,11 +313,18 @@ function siguienteCancion() {
 }
 
 function saltarCancion(id) {
-    if (!confirm("¿Quitar esta canción?")) return;
-    const fd = new FormData(); fd.append("id", id);
-    fetch("' . BASE_URL . '/cola/saltar", { method: "POST", body: fd })
-        .then(r => r.json())
-        .then(() => { mostrarToast("Canción removida", "info"); refrescarCola(); });
+    confirmarAccion({
+        titulo: "¿Quitar esta canción?",
+        texto: "Se eliminará de la cola de espera.",
+        confirmar: "Sí, quitar",
+        icono: "warning"
+    }).then((result) => {
+        if (!result.isConfirmed) return;
+        const fd = new FormData(); fd.append("id", id);
+        fetch("' . BASE_URL . '/cola/saltar", { method: "POST", body: fd })
+            .then(r => r.json())
+            .then(() => { mostrarToast("Canción removida", "info"); refrescarCola(); });
+    });
 }
 
 function puntuarRapido(colaId) {

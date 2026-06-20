@@ -173,10 +173,17 @@ function confirmarCobro() {
     fetch("' . BASE_URL . '/caja/cobrar", { method: "POST", body: fd })
         .then(r => r.json())
         .then(data => {
-            if (data.ok) {
-                mostrarToast("🎉 Pago registrado con éxito", "success");
+          if (data.ok) {
+                Swal.fire({
+                    title: "¡Pago registrado!",
+                    text: "La boleta se abrirá en una nueva pestaña.",
+                    icon: "success",
+                    confirmButtonText: "Perfecto",
+                    background: "#1a1a28", color: "#f0e8d0", confirmButtonColor: "#ffd700",
+                    customClass: { popup: "swal-tm" }
+                });
                 window.open("' . BASE_URL . '/caja/boleta/" + data.boleta_id, "_blank");
-                setTimeout(() => location.reload(), 800);
+                setTimeout(() => location.reload(), 1200);
             } else {
                 mostrarToast(data.error || "Error al cobrar", "danger");
                 btn.disabled = false; btn.textContent = "✅ Confirmar Pago";

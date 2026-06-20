@@ -72,6 +72,10 @@ class Pedido {
             }
 
             $db->commit();
+
+            $mesaNum = !empty($cabecera['mesa_id']) ? Database::fetch("SELECT numero FROM mesas WHERE id=?", [$cabecera['mesa_id']])['numero'] ?? null : null;
+            Notificacion::nuevoPedido($pedidoId, $mesaNum);
+
             return $pedidoId;
         } catch (Exception $e) {
             $db->rollBack();

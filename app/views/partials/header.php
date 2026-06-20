@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { corePlugins: { preflight: false } }</script>
 
@@ -223,7 +224,46 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: slideInRight 0.4s ease;
         }
         @keyframes slideInRight { from { transform: translateX(120%); opacity:0; } to { transform: translateX(0); opacity:1; } }
-    </style>
+    .notif-dropdown {
+    position: absolute; top: 50px; right: 0; width: 320px;
+    background: linear-gradient(145deg, var(--negro-3), var(--negro-2));
+    border: 1px solid rgba(255,215,0,0.15); border-radius: 14px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+    display: none; z-index: 2000; overflow: hidden;
+    animation: notifDropIn 0.25s ease;
+}
+.notif-dropdown.show { display: block; }
+@keyframes notifDropIn { from { opacity:0; transform: translateY(-10px);} to { opacity:1; transform: translateY(0);} }
+
+.notif-dropdown-header {
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 0.85rem 1rem; border-bottom: 1px solid rgba(255,215,0,0.1);
+    font-size: 0.85rem; font-weight: 700; color: var(--oro);
+}
+.notif-mark-all {
+    background:none; border:none; color: rgba(240,232,208,0.4); font-size: 0.7rem;
+    cursor: pointer; text-decoration: underline;
+}
+.notif-mark-all:hover { color: var(--oro); }
+
+.notif-list { max-height: 360px; overflow-y: auto; }
+.notif-item {
+    display: flex; gap: 0.7rem; padding: 0.8rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer; transition: background 0.15s; position: relative;
+}
+.notif-item:hover { background: rgba(255,215,0,0.04); }
+.notif-item.unread { background: rgba(255,215,0,0.03); }
+.notif-item.unread::before {
+    content:''; position:absolute; left:6px; top:50%; transform:translateY(-50%);
+    width:6px; height:6px; border-radius:50%; background: var(--oro);
+}
+.notif-icon-box { font-size: 1.1rem; flex-shrink:0; margin-top:0.1rem; }
+.notif-content { flex:1; min-width:0; }
+.notif-title-txt { font-size: 0.82rem; font-weight: 700; color: var(--blanco); }
+.notif-msg-txt { font-size: 0.75rem; color: rgba(240,232,208,0.5); margin-top: 0.1rem; }
+.notif-time-txt { font-size: 0.68rem; color: rgba(255,215,0,0.4); margin-top: 0.3rem; }
+.notif-empty { text-align:center; padding: 2rem 1rem; color: rgba(240,232,208,0.3); font-size: 0.85rem; }
+</style>
     <?= $extraStyles ?? '' ?>
 </head>
 <body>
@@ -302,8 +342,13 @@
                     <div class="name"><?= htmlspecialchars(Auth::usuario()['nombre']) ?></div>
                     <div class="role"><?= Auth::rolLabel() ?></div>
                 </div>
-                <a href="<?= BASE_URL ?>/logout" class="logout-btn" title="Cerrar sesión" onclick="return confirm('¿Cerrar sesión?')">⏻</a>
-            </div>
+<a href="javascript:void(0)" class="logout-btn" title="Cerrar sesión" onclick="confirmarLogout()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
+    </svg>
+</a>            </div>
         </div>
     </aside>
 
@@ -322,9 +367,20 @@
                     <div class="time" id="liveClock">--:--:--</div>
                     <div class="date" id="liveDate">cargando...</div>
                 </div>
-                <div class="notif-bell" onclick="alert('Sistema de notificaciones')">
-                    🔔<span class="notif-dot" id="notifDot"></span>
-                </div>
+                <div style="position:relative;">
+    <div class="notif-bell" onclick="toggleNotifDropdown()" id="notifBellBtn">
+        🔔<span class="notif-dot" id="notifDot"></span>
+    </div>
+    <div id="notifDropdown" class="notif-dropdown">
+        <div class="notif-dropdown-header">
+            <span>Notificaciones</span>
+            <button onclick="marcarTodasLeidas()" class="notif-mark-all">Marcar todas leídas</button>
+        </div>
+        <div id="notifList" class="notif-list">
+            <div class="text-center py-3" style="color:rgba(240,232,208,0.3); font-size:0.8rem;">Cargando...</div>
+        </div>
+    </div>
+</div>
             </div>
         </header>
 

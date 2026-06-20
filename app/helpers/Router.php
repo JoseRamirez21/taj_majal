@@ -82,6 +82,8 @@ class Router {
         // ── API / AJAX ────────────────────────────────────────
         'api/cola'          => ['controller' => 'ColaController',        'method' => 'estadoAjax',     'auth' => true],
         'api/notificaciones'=> ['controller' => 'DashboardController',   'method' => 'notificaciones', 'auth' => true],
+        'api/notificaciones/leer'  => ['controller' => 'DashboardController', 'method' => 'marcarLeida',      'auth' => true],
+        'api/notificaciones/leertodas' => ['controller' => 'DashboardController', 'method' => 'marcarTodasLeidas', 'auth' => true],
         'api/mesas'         => ['controller' => 'MesasController',       'method' => 'estadoAjax',     'auth' => true],
     ];
 
