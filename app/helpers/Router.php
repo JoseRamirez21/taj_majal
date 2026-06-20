@@ -12,6 +12,9 @@ class Router {
         'login'             => ['controller' => 'AuthController',        'method' => 'login',          'auth' => false],
         'login/procesar'    => ['controller' => 'AuthController',        'method' => 'procesar',       'auth' => false],
         'logout'            => ['controller' => 'AuthController',        'method' => 'logout',         'auth' => false],
+        'tv'                => ['controller' => 'PublicController',      'method' => 'tv',             'auth' => false],
+        'pedir'             => ['controller' => 'PublicController',      'method' => 'pedir',           'auth' => false],
+
 
         // ── DASHBOARD ─────────────────────────────────────────
         ''                  => ['controller' => 'DashboardController',   'method' => 'index',          'auth' => true],
@@ -27,11 +30,12 @@ class Router {
 
         // ── COLA KARAOKE ───────────────────────────────────────
         'cola'              => ['controller' => 'ColaController',        'method' => 'index',          'auth' => true],
-        'cola/agregar'      => ['controller' => 'ColaController',        'method' => 'agregar',        'auth' => true],
+        'cola/agregar'      => ['controller' => 'ColaController',        'method' => 'agregar',        'auth' => false],
         'cola/siguiente'    => ['controller' => 'ColaController',        'method' => 'siguiente',      'auth' => true, 'roles' => ['admin','operador']],
         'cola/saltar'       => ['controller' => 'ColaController',        'method' => 'saltar',         'auth' => true, 'roles' => ['admin','operador']],
         'cola/estado'       => ['controller' => 'ColaController',        'method' => 'estado',         'auth' => true],
         'cola/puntuar'      => ['controller' => 'ColaController',        'method' => 'puntuar',        'auth' => true],
+        'cola/buscar'       => ['controller' => 'ColaController',        'method' => 'buscar',         'auth' => false],
 
         // ── MESAS ─────────────────────────────────────────────
         'mesas'             => ['controller' => 'MesasController',       'method' => 'index',          'auth' => true],
@@ -80,7 +84,7 @@ class Router {
         'configuracion/guardar'=>['controller'=> 'ConfigController',     'method' => 'guardar',        'auth' => true, 'roles' => ['admin']],
 
         // ── API / AJAX ────────────────────────────────────────
-        'api/cola'          => ['controller' => 'ColaController',        'method' => 'estadoAjax',     'auth' => true],
+        'api/cola'          => ['controller' => 'ColaController',        'method' => 'estadoAjax',     'auth' => false],
         'api/notificaciones'=> ['controller' => 'DashboardController',   'method' => 'notificaciones', 'auth' => true],
         'api/notificaciones/leer'  => ['controller' => 'DashboardController', 'method' => 'marcarLeida',      'auth' => true],
         'api/notificaciones/leertodas' => ['controller' => 'DashboardController', 'method' => 'marcarTodasLeidas', 'auth' => true],

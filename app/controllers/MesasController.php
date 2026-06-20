@@ -56,4 +56,8 @@ class MesasController {
         echo json_encode(Mesa::todas());
         exit;
     }
+    public function qrCodes(): void {
+    $mesas = Mesa::todas();
+    require_once APP_PATH . '/views/admin/mesas_qr.php';
+}
 }
